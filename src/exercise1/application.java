@@ -9,36 +9,41 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class application {
+public class Application {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String path = "C:\\workspaces\\ws-java\\archiveExercise\\.csv";
 		List<Product> products = new ArrayList<>();
+		String path = "C:\\workspaces\\ws-java\\archiveExercise\\.csv";
+		String dirPath = "C:\\workspaces\\ws-java\\archiveExercise\\out";
+		String dirFilePath = dirPath + "\\summary.csv";
+		File filePath = new File(path);
 
-		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+		// Reading the CSV file
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				String[] productData = line.split(",");
-				Product product = new Product(productData[0], Double.parseDouble(productData[1]),Integer.parseInt(productData[2]));
+				String[] productsData = line.split(",");
+				Product product = new Product(productsData[0], Double.parseDouble(productsData[1]),Integer.parseInt(productsData[2]));
 				products.add(product);
 			}
 		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
+			System.out.println("Error reading file: " + e.getMessage());
 		}
 
-		String outDirPath = "C:\\workspaces\\ws-java\\archiveExercise\\out";
-		File outFile = new File(outDirPath);
-		outFile.mkdir();
+		File summary = new File(dirPath);
+		if (summary.mkdir())
+			System.out.println("Directory created succesfully!");
+		else
+			System.out.println("Error creating the directory!");
 
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(outDirPath + "\\summary.csv", true))) {
+		// Writing to the summary CSV file
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(dirFilePath, true))) {
 			for (Product product : products) {
 				bw.write(product.toString());
 				bw.newLine();
 			}
-
 		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
+			System.out.println("Error writing to file: " + e.getMessage());
 		}
 
 	}
